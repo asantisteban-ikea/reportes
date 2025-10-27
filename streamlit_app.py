@@ -1,33 +1,34 @@
 import streamlit as st
 import importlib
 
-# === CONFIGURACIÓN GENERAL ===
 st.set_page_config(
     page_title="Sistema CCTV",
     page_icon="🎥",
     layout="centered"
 )
 
-# === ESTADO DE SESIÓN ===
-if "current_form" not in st.session_state:
-    st.session_state.current_form = None  # No hay formulario activo
-
-
-# === FUNCIÓN PARA CAMBIAR DE FORMULARIO ===
-def open_form(form_name):
-    st.session_state.current_form = form_name
-
-
 # === SIDEBAR ===
 st.sidebar.title("📂 Navegación")
-page = st.sidebar.radio(
+main_page = st.sidebar.radio(
     "Selecciona un módulo:",
     ["🏠 Inicio", "📋 Registro", "🔍 Consulta", "📊 Reportes", "⚙️ Configuración"]
 )
 
-# === PÁGINA PRINCIPAL ===
-if page == "🏠 Inicio":
-    st.session_state.current_form = None
+# === FUNCIÓN PARA CARGAR SUBPÁGINAS ===
+def cargar_pagina(nombre_modulo):
+    try:
+        modulo = importlib.import_module(nombre_modulo)
+        if hasattr(modulo, "run"):
+            modulo.run()  # ejecuta función run() del módulo
+        else:
+            st.warning(f"⚠️ El módulo `{nombre_modulo}` no tiene una función run().")
+    except ModuleNotFoundError:
+        st.error(f"❌ No se encontró el módulo `{nombre_modulo}`.")
+    except Exception as e:
+        st.error(f"⚠️ Error al cargar la página: {e}")
+
+# === INICIO ===
+if main_page == "🏠 Inicio":
     st.title("🎥 Sistema de Control CCTV")
     st.markdown("---")
     st.header("🧭 Cómo navegar")
@@ -39,42 +40,42 @@ if page == "🏠 Inicio":
     - ⚙️ **Configuración:** Administra listas de SKU, usuarios o parámetros del sistema.
     """)
 
-# === MÓDULO REGISTRO ===
-elif page == "📋 Registro":
+# === REGISTRO ===
+elif main_page == "📋 Registro":
     st.title("📋 Registro de actividades")
+    st.write("Selecciona el formulario que deseas abrir:")
 
-    # Si no hay formulario abierto, mostrar botones
-    if st.session_state.current_form is None:
-        st.write("Selecciona el formulario que deseas abrir:")
+    col1, col2, col3 = st.columns(3)
 
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.button("🧾 Recuperaciones CCTV", on_click=lambda: open_form("recuperaciones_cctv"))
-        with col2:
-            st.button("📦 Auditoría Recibo", on_click=lambda: open_form("auditoria_recibo"))
-        with col3:
-            st.button("🏭 Auditoría Warehouse", on_click=lambda: open_form("auditoria_warehouse"))
+    if "subpage" not in st.session_state:
+        st.session_state["subpage"] = None
 
-    # Si ya hay un formulario activo, cargarlo dinámicamente
-    else:
-        try:
-            form_module = importlib.import_module(f"forms.{st.session_state.current_form}")
-            form_module.main()  # Llama la función principal del formulario
-        except Exception as e:
-            st.error(f"❌ Error al cargar el formulario: {e}")
+    with col1:
+        if st.button("🧾 Recuperaciones CCTV"):
+            st.session_state["subpage"] = "pages.1_recuperaciones_cctv"
 
+    with col2:
+        if st.button("📦 Auditoría Recibo"):
+            st.session_state["subpage"] = "pages.2_auditoria_recibo"
+
+    with col3:
+        if st.button("🏭 Auditoría Warehouse"):
+            st.session_state["subpage"] = "pages.3_auditoria_warehouse"
+
+    # Cargar la subpágina seleccionada
+    if st.session_state["subpage"]:
         st.markdown("---")
-        st.button("⬅️ Volver al menú de registro", on_click=lambda: open_form(None))
+        cargar_pagina(st.session_state["subpage"])
 
-# === MÓDULOS RESTANTES ===
-elif page == "🔍 Consulta":
-    st.session_state.current_form = None
+# === CONSULTA ===
+elif main_page == "🔍 Consulta":
     st.info("🔍 Módulo de consulta aún en desarrollo.")
 
-elif page == "📊 Reportes":
-    st.session_state.current_form = None
+# === REPORTES ===
+elif main_page == "📊 Reportes":
     st.info("📊 Módulo de reportes aún en desarrollo.")
 
-elif page == "⚙️ Configuración":
-    st.session_state.current_form = None
+# === CONFIGURACIÓN ===
+elif main_page == "⚙️ Configuración":
     st.info("⚙️ Módulo de configuración aún en desarrollo.")
+
