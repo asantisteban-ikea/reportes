@@ -5,30 +5,30 @@ from google.oauth2 import service_account
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-def main():
+def run():
     # === CONFIGURACIÓN ===
     st.title("🧾 Formato para reporte de Recepción en bodega")
-
+    
     # === CREDENCIALES ===
     credentials = service_account.Credentials.from_service_account_info(
         st.secrets["connections"]["gsheets"]["credentials"],
         scopes=["https://www.googleapis.com/auth/spreadsheets"]
     )
-
+    
     gc = gspread.authorize(credentials)
     spreadsheet_id = st.secrets["connections"]["gsheets"]["spreadsheet"]
     sh = gc.open_by_key(spreadsheet_id)
-
+    
     # === CARGA DE DATOS CON CACHE (TTL = 7 días) ===
     @st.cache_data(ttl=7*24*60*60)  # 7 días en segundos
     def load_worksheet_data(sheet_name):
         ws = sh.worksheet(sheet_name)
         return pd.DataFrame(ws.get_all_records())
-
+    
     # === CARGA DE HOJAS ===
     df_vigilantes = load_worksheet_data("VIGILANTES")
     recuperaciones_ws = sh.worksheet("AUDITORIA BODEGA")
-
+    
     # === INTERFAZ ===
     lista_tiendas = st.selectbox(
         "Elige una de las tiendas",
@@ -36,7 +36,7 @@ def main():
         placeholder="Selecciona una tienda",
         index=None
     )
-
+    
     if lista_tiendas:
         match lista_tiendas:
             case "IKEA NQS":
@@ -45,10 +45,10 @@ def main():
                 id_tienda = 2
             case "IKEA ENVIGADO":
                 id_tienda = 3
-
+    
         fecha = st.date_input("📅 Fecha de la recuperación", value=None)
         hora = st.time_input("🕒 Hora de la recuperación", value=None)
-
+    
         if fecha and hora:
             horas = hora.hour
             rango_horas = f"{horas} - {horas+1}"
@@ -96,7 +96,7 @@ def main():
                     dia = "Sabado"
                 case 6:
                     dia = "Domingo"
-
+    
         vigilantes_df = df_vigilantes[df_vigilantes["ID_TIENDA"] == id_tienda]
         lista_vigilantes = st.selectbox(
             "👮 Nombre del vigilante",
@@ -105,21 +105,23 @@ def main():
             index=None
         )
         novedad = st.text_area("📝 Descripción de la novedad")
-
+    
         evidencia = st.camera_input("")
-
-
+    
+    
         if st.button("📤 Registrar"):
             # Validar campos obligatorios
             hora_local = datetime.now(ZoneInfo("America/Bogota"))
             fecha_registro = (datetime.utcnow() - timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S")
-
+    
             nueva_fila = [
                 hora_local.strftime("%Y-%m-%d %H:%M:%S"),
                 lista_tiendas, str(fecha), str(hora),
                 lista_vigilantes,
                 mes, dia, rango_horas
             ]
-
+    
             recuperaciones_ws.append_row(nueva_fila)
+    
             st.success("✅ Información registrada correctamente.")
+    
