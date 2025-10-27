@@ -125,7 +125,7 @@ def run():
         "📦 SKU", 
         df_sku["SKU"].dropna().tolist(),
         placeholder= "Ingresa el SKU del producto",
-        value=None
+        index=None
         )
     
     if lista_sku:
@@ -232,6 +232,7 @@ def run():
             recuperaciones_ws.append_row(nueva_fila)
             st.success("✅ Información registrada correctamente.")
     
+
 
 
 
