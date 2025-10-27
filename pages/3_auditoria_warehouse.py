@@ -43,7 +43,7 @@ def run():
         "Auditoria AS-IS",
         "Plan Enfermero"],
         placeholder="Auditoria",
-        value=None
+        index=None
     )
     
     if fecha:
@@ -110,7 +110,7 @@ def run():
         ],
         placeholder="Selecciona una de las opciones",
         accept_new_options=True,
-        value=None
+        index=None
     )
     
     tipo_documento = st.radio(
@@ -148,7 +148,7 @@ def run():
         ],
         placeholder="Auditor",
         accept_new_options=True,
-        value=None
+        index=None
     )
     
     opciones_usuarios = [
@@ -186,7 +186,8 @@ def run():
         "Sin auditar",
         "Recuperación",
         "Producto de Asis"],
-        value=None
+        placeholder="Indica la novedad",
+        index=None
     )
     
     area = st.radio(
@@ -231,6 +232,7 @@ def run():
             recuperaciones_ws.append_row(nueva_fila)
             st.success("✅ Información registrada correctamente.")
     
+
 
 
 
