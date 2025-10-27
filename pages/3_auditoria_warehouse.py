@@ -116,7 +116,6 @@ def run():
     tipo_documento = st.radio(
         "Indica el tipo de documento",
         ["OLPN", "ILPN"],
-        placeholder="Selecciona",
         value=None
     )
     
@@ -232,4 +231,5 @@ def run():
             recuperaciones_ws.append_row(nueva_fila)
             st.success("✅ Información registrada correctamente.")
     
+
 
