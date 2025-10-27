@@ -213,7 +213,7 @@ def run():
     
     if st.button("📤 Registrar"):
         # Validar campos obligatorios
-        if not numero_documento or not cantidad or not pvp:
+        if not numero_documento or not cantidad or not costo:
             st.error("⚠️ Debes completar los campos obligatorios antes de registrar.")
         else:
             # Ajuste de hora a Colombia (UTC-5)
