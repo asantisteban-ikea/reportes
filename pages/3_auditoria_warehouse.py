@@ -221,6 +221,7 @@ def run():
             fecha_registro = (datetime.utcnow() - timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S")
     
             nueva_fila = [
+                hora_local.strftime("%Y-%m-%d %H:%M:%S"),
                 str(fecha), proceso_auditoria, novedad,
                 tipo_documento,numero_documento, lista_sku,
                 auditor, picker, documento_usuario,

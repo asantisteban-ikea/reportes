@@ -106,7 +106,7 @@ def run():
         )
         novedad = st.text_area("📝 Descripción de la novedad")
     
-        evidencia = st.camera_input("")
+        evidencia = st.camera_input("Adjunta evidencia fotografica de la revisión")
     
     
         if st.button("📤 Registrar"):
@@ -117,7 +117,7 @@ def run():
             nueva_fila = [
                 hora_local.strftime("%Y-%m-%d %H:%M:%S"),
                 lista_tiendas, str(fecha), str(hora),
-                lista_vigilantes,
+                lista_vigilantes, novedad, evidencia,
                 mes, dia, rango_horas
             ]
     
