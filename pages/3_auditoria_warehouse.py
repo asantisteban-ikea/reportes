@@ -43,7 +43,7 @@ def run():
         "Auditoria AS-IS",
         "Plan Enfermero"],
         placeholder="Auditoria",
-        index=None
+        value=None
     )
     
     if fecha:
@@ -110,7 +110,7 @@ def run():
         ],
         placeholder="Selecciona una de las opciones",
         accept_new_options=True,
-        index=None
+        value=None
     )
     
     tipo_documento = st.radio(
@@ -125,7 +125,7 @@ def run():
         "📦 SKU", 
         df_sku["SKU"].dropna().tolist(),
         placeholder= "Ingresa el SKU del producto",
-        index=None
+        value=None
         )
     
     if lista_sku:
@@ -148,7 +148,7 @@ def run():
         ],
         placeholder="Auditor",
         accept_new_options=True,
-        index=None
+        value=None
     )
     
     opciones_usuarios = [
@@ -186,8 +186,7 @@ def run():
         "Sin auditar",
         "Recuperación",
         "Producto de Asis"],
-        horizontal=False,
-        index=None
+        value=None
     )
     
     area = st.radio(
@@ -232,6 +231,7 @@ def run():
             recuperaciones_ws.append_row(nueva_fila)
             st.success("✅ Información registrada correctamente.")
     
+
 
 
 
